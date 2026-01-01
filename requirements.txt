@@ -7,7 +7,7 @@ psycopg2-binary==2.9.9
 SQLAlchemy==2.0.32
 alembic==1.13.2
 
-# Diese Versionen haben stabile manylinux-Wheels für Python 3.11
+# Kompatible Versionen für Python 3.11
 pydantic==2.7.1
 pydantic-core==2.18.2
 pydantic-settings==2.4.0
