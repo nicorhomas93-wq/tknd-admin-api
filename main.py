@@ -1,13 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import JSONResponse
+
+from routers import auth as auth_router
+from routers import users as users_router
 
 app = FastAPI(title="TKND Admin API")
 
-# CORS, falls ein Frontend zugreift (Domains anpassen)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],          # produktiv: spezifische Domains eintragen
+    allow_origins=["*"],      # produktiv: explizite Domains eintragen
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -15,11 +17,15 @@ app.add_middleware(
 
 @app.get("/", include_in_schema=False)
 def root():
-    # entweder JSON-Status …
     return JSONResponse({"service": "tknd-admin-api", "status": "ok"})
-    # … oder auf die Swagger-UI:
-    # return RedirectResponse(url="/docs")
 
 @app.get("/health", include_in_schema=False)
 def health():
     return {"status": "ok"}
+
+app.include_router(auth_router.router)
+app.include_router(users_router.router)
+
+# (optional) Admin-Panel:
+# import admin  # falls du sqladmin verwenden möchtest
+``
