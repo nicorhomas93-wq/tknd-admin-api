@@ -1,5 +1,5 @@
 fastapi==0.115.5
 uvicorn[standard]==0.32.0
 gunicorn==21.2.0
-psycopg[binary]==3.2.1     # moderner, stabiler als psycopg2-binary auf vielen Linux-Plattformen
-python-dotenv==1.0.1       # nur falls du .env lokal nutzt
+psycopg2-binary==2.9.9
+python-dotenv==1.0.1
