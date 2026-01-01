@@ -1,18 +1,25 @@
 fastapi==0.115.5
 uvicorn[standard]==0.32.0
 gunicorn==21.2.0
+
+# Postgres-Treiber: vorgebaute Wheels, KEIN Rust nötig
 psycopg2-binary==2.9.9
 
+# ORM & Migrationen
 SQLAlchemy==2.0.32
 alembic==1.13.2
+
+# Pydantic & Settings
 pydantic==2.7.1
 pydantic-settings==2.4.0
 
+# Auth & Validierung
 passlib[bcrypt]==1.7.4
 bcrypt==4.1.2
 PyJWT==2.8.0
 python-multipart==0.0.9
 email-validator==2.1.0.post1
 
+# Admin (optional, du kannst es auch später hinzufügen)
 sqladmin==0.16.1
 jinja2==3.1.4
