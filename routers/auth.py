@@ -1,9 +1,10 @@
+# routers/auth.py
 from fastapi import APIRouter
 
-# Der Name MUSS 'auth_router' sein, weil du ihn so importierst
+# Der Router heißt 'auth_router', damit der Import in main.py funktioniert
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
 @auth_router.get("/check")
 async def auth_check():
+    # einfache gültige Rückgabe
     return {"status": "auth ok"}
-``
