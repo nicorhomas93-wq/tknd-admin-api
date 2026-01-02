@@ -1,7 +1,7 @@
 # routers/auth.py
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
-from core.database import get_db, Base, engine
+from core.database import get_db
 from core.security import hash_password, verify_password, create_access_token
 from schemas.user import LoginRequest, RegisterRequest, UserOut
 from models.user import User, RoleEnum
@@ -9,7 +9,6 @@ from core.config import settings
 import os
 
 auth_router = APIRouter()
-Base.metadata.create_all(bind=engine)
 
 @auth_router.post("/register", response_model=UserOut)
 def register(req: RegisterRequest, db: Session = Depends(get_db)):
@@ -41,13 +40,13 @@ def logout(response: Response):
     response.delete_cookie("access_token", path="/", domain=settings.COOKIE_DOMAIN)
     return {"ok": True}
 
-# ⟵ Lazy-Import, um mögliche Zirkularität auszuschließen
-def _get_current_user_dep():
-    from deps.auth_cookie import get_current_user
+# --- Kreise sicher vermeiden: Lazy-Dependency-Factory
+def _current_user_dep():
+    from deps.auth_dep import get_current_user
     return get_current_user
 
 @auth_router.get("/me", response_model=UserOut)
-def me(current: User = Depends(_get_current_user_dep())):
+def me(current: User = Depends(_current_user_dep())):
     return current
 
 @auth_router.post("/bootstrap", include_in_schema=False)
