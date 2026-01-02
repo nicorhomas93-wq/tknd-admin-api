@@ -1,29 +1,30 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+import os
 
-# Direkte Datei-Importe:
-from routers.users import router as users_router
 from routers.auth import auth_router
+from routers.admins import admins_router
+from routers.customers import customers_router
+from routers.technicians import technicians_router
+
+ALLOWED = os.getenv("ALLOWED_ORIGINS", "https://tknd-unity-gbr.com").split(",")
 
 app = FastAPI(title="TKND Admin API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In Produktion: spezifische Domains eintragen
+    allow_origins=ALLOWED,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
 @app.get("/", include_in_schema=False)
-async def health():
+def health():
     return {"service": "tknd-admin-api", "status": "ok"}
 
-@app.get("/health", include_in_schema=False)
-async def health2():
-    return JSONResponse({"status": "ok"})
-
-# Router einbinden
-app.include_router(users_router)
-app.include_router(auth_router)
+# Router registrieren
+app.include_router(auth_router,         prefix="/auth",        tags=["auth"])
+app.include_router(admins_router,       prefix="/admins",      tags=["admins"])
+app.include_router(customers_router,    prefix="/customers",   tags=["customers"])
+app.include_router(technicians_router,  prefix="/technicians", tags=["technicians"])
