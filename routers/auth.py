@@ -5,6 +5,7 @@ from core.security import hash_password, verify_password, create_access_token
 from schemas.user import LoginRequest, RegisterRequest, UserOut
 from models.user import User, RoleEnum
 from core.config import settings
+from deps.auth_cookie import get_current_user
 import os
 
 auth_router = APIRouter()
@@ -41,7 +42,7 @@ def logout(response: Response):
     return {"ok": True}
 
 @auth_router.get("/me", response_model=UserOut)
-def me(current: User = Depends(...)):  # setze hier deine get_current_user()-Dependency aus deps/auth_cookie.py
+def me(current: User = Depends(get_current_user)):
     return current
 
 @auth_router.post("/bootstrap", include_in_schema=False)
@@ -49,7 +50,9 @@ def bootstrap(db: Session = Depends(get_db)):
     email = os.getenv("SUPERADMIN_EMAIL"); password = os.getenv("SUPERADMIN_PASSWORD")
     if not email or not password:
         raise HTTPException(status_code=400, detail="SUPERADMIN_EMAIL/PASSWORD missing")
-    if db.query(User).filter(User.email == email).first(): return {"message": "exists"}
-    u = User(email=email, display_name="Superadmin", hashed_password=hash_password(password), role=RoleEnum.SUPERADMIN)
+    if db.query(User).filter(User.email == email).first():
+        return {"message": "exists"}
+    u = User(email=email, display_name="Superadmin",
+             hashed_password=hash_password(password), role=RoleEnum.SUPERADMIN)
     db.add(u); db.commit()
     return {"message": "created"}
