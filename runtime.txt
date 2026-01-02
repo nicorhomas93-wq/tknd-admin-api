@@ -1,4 +1,1 @@
-echo "python-3.11.9" > runtime.txt
-git add runtime.txt
-git commit -m "Pin Python version to 3.11.9 for Render"
-git push
+python-3.11.9
