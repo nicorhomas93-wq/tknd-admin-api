@@ -28,4 +28,3 @@ app.include_router(users_router.router)
 
 # (optional) Admin-Panel:
 # import admin  # falls du sqladmin verwenden möchtest
-``
