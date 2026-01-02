@@ -1,7 +1,8 @@
+# routers/technicians.py
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, EmailStr
 from typing import List
-from deps.auth_cookie import require_role
+from deps.auth_dep import require_role
 from models.user import RoleEnum
 from core.pdf import build_invoice_pdf
 from core.emailer import send_mail
@@ -25,6 +26,12 @@ class InvoiceRequest(BaseModel):
 
 @technicians_router.post("/invoices")
 def create_and_send_invoice(payload: InvoiceRequest, current=Depends(require_role(RoleEnum.TECHNICIAN))):
+    """
+    Techniker erzeugt PDF und sendet es per E-Mail (SMTP ENV muss gesetzt sein).
+    """
+    if not payload.items or any(i.qty <= 0 or i.rate < 0 for i in payload.items):
+        raise HTTPException(status_code=400, detail="Invalid items")
+
     pdf = build_invoice_pdf(
         invoice_number=payload.invoiceNumber,
         issuer_name=payload.issuerName,
